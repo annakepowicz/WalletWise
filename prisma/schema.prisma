@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  createdAt     DateTime       @default(now())
+  accounts      Account[]
+  categories    Category[]
+  transactions  Transaction[]
+  savingsGoals  SavingsGoal[]
+  subscriptions Subscription[]
+  shoppingLists ShoppingList[]
+}
+
+model ShoppingList {
+  id        String             @id @default(cuid())
+  name      String
+  createdAt DateTime           @default(now())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  items     ShoppingListItem[]
+}
+
+model ShoppingListItem {
+  id           String       @id @default(cuid())
+  name         String
+  isChecked    Boolean      @default(false)
+  listId       String
+  shoppingList ShoppingList @relation(fields: [listId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id      String  @id @default(cuid())
+  name    String
+  balance Decimal @default(0.00)
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id                String        @id @default(cuid())
+  name              String
+  monthlyLimit      Decimal       @default(0.00)
+  isRolloverEnabled Boolean       @default(false)
+  aiKeywords        String[]
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  transactions      Transaction[]
+}
+
+model Transaction {
+  id              String    @id @default(cuid())
+  amount          Decimal
+  description     String
+  date            DateTime  @default(now())
+  type            String    // INCOME | EXPENSE
+  isAiCategorized Boolean   @default(false)
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id])
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+model SavingsGoal {
+  id            String    @id @default(cuid())
+  name          String
+  targetAmount  Decimal
+  currentAmount Decimal   @default(0.00)
+  monthlyTarget Decimal?
+  deadline      DateTime?
+  isArchived    Boolean   @default(false)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Subscription {
+  id           String   @id @default(cuid())
+  providerName String
+  amount       Decimal
+  billingDay   Int
+  startDate    DateTime @default(now())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+}
