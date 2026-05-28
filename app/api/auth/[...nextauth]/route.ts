@@ -20,15 +20,17 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: any }) {
-      if (user) {
-        token.id = user.id;
+    async jwt({ token, user, account }: { token: JWT; user?: any; account?: any }) {
+      if (account) {
+        token.id = user?.id;
+        token.idToken = account.id_token;
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id as string | undefined;
+        (session.user as any).idToken = token.idToken;
       }
       return session;
     },
