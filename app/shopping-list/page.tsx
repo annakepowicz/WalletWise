@@ -1,9 +1,9 @@
-import { db } from "@/lib/db";
+import { getCurrentAppUser } from "@/lib/auth";
 import { ShoppingCart } from "lucide-react";
 import { ShoppingListPanel } from "@/components/business/ShoppingListPanel";
 
 export default async function ShoppingListPage() {
-  const user = await db.user.findFirst({
+  const user = await getCurrentAppUser({
     include: {
       shoppingLists: {
         orderBy: { createdAt: "desc" },

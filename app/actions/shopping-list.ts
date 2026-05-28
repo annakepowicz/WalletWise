@@ -1,13 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getCurrentAppUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function createShoppingList(formData: FormData) {
   const name = formData.get("name") as string;
   if (!name?.trim()) return { error: "Podaj nazwę listy" };
 
-  const user = await db.user.findFirst();
+  const user = await getCurrentAppUser();
   if (!user) return { error: "Brak użytkownika" };
 
   await db.shoppingList.create({
