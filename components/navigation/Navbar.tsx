@@ -8,6 +8,7 @@ import {
   Wallet,
   BarChart3,
   ShoppingCart,
+  Receipt,
 } from "lucide-react";
 
 export function Navbar() {
@@ -19,6 +20,7 @@ export function Navbar() {
     { href: "/calendar", label: "Kalendarz", icon: CalendarDays },
     { href: "/charts", label: "Wykresy", icon: BarChart3 },
     { href: "/shopping-list", label: "Zakupy", icon: ShoppingCart },
+    { href: "/receipts", label: "Paragony", icon: Receipt },
   ];
 
   return (
