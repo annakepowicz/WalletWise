@@ -10,14 +10,14 @@ async function main() {
   await prisma.subscription.deleteMany();
   await prisma.savingsGoal.deleteMany();
   await prisma.category.deleteMany();
-  await prisma.account.deleteMany();
+  await prisma.appAccount.deleteMany();
   await prisma.user.deleteMany();
 
   const user = await prisma.user.create({
     data: { email: "demo@walletwise.pl", name: "Jan Kowalski" },
   });
 
-  await prisma.account.create({
+  await prisma.appAccount.create({
     data: { name: "Portfel Główny", balance: 4555.0, userId: user.id },
   });
 
