@@ -1,11 +1,10 @@
 import NextAuth, { type NextAuthOptions, type Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import KeycloakProvider from "next-auth/providers/keycloak";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { db } from "@/lib/db";
+import { createAuthAdapter } from "@/lib/auth-adapter";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  adapter: createAuthAdapter(),
   session: {
     strategy: "jwt",
   },
