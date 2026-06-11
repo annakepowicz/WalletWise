@@ -8,12 +8,33 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  providers: [
-    KeycloakProvider({
+providers: [
+    // TUTAJ WSTAWIAMY CHAMSKIEGO PROVIDERA ZAMIAST KeycloakProvider()
+    {
+      id: "keycloak",
+      name: "Keycloak",
+      type: "oauth",
+      version: "2.0",
       clientId: process.env.KEYCLOAK_CLIENT_ID || "",
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || "",
-      issuer: process.env.KEYCLOAK_ISSUER || "",
-    }),
+      issuer: "http://localhost:8080/realms/walletwise",
+      authorization: {
+        url: "http://localhost:8080/realms/walletwise/protocol/openid-connect/auth",
+        params: { scope: "openid email profile" }
+      },
+      token: "http://keycloak:8080/realms/walletwise/protocol/openid-connect/token",
+      userinfo: "http://keycloak:8080/realms/walletwise/protocol/openid-connect/userinfo",
+      jwks_endpoint: "http://keycloak:8080/realms/walletwise/protocol/openid-connect/certs",
+      
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name ?? profile.preferred_username,
+          email: profile.email,
+          image: profile.picture,
+        }
+      },
+    }
   ],
   pages: {
     signIn: "/login",

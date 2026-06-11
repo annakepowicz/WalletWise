@@ -1,0 +1,22 @@
+# Node dependencies - never copy these; Docker installs them fresh
+node_modules
+keycloak-theme/node_modules
+
+# Next.js build output
+.next
+
+# Git
+.git
+.gitignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files (keep secrets out of images)
+.env
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
