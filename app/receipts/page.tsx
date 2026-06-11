@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import { Receipt } from "lucide-react";
 import { ReceiptScanPanel } from "@/components/business/ReceiptScanPanel";
+import { getCurrentAppUser } from "@/lib/auth";
 
 export default async function ReceiptsPage() {
-  const user = await db.user.findFirst();
+  const user = await getCurrentAppUser();
 
   if (!user) {
     return (

@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getCurrentAppUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export type SaveReceiptInput = {
@@ -11,7 +12,7 @@ export type SaveReceiptInput = {
 };
 
 export async function saveReceiptTransaction(data: SaveReceiptInput) {
-  const user = await db.user.findFirst();
+  const user = await getCurrentAppUser();
   if (!user) return { error: "Brak użytkownika" };
 
   const categories = await db.category.findMany({ where: { userId: user.id } });
@@ -36,9 +37,9 @@ export async function saveReceiptTransaction(data: SaveReceiptInput) {
         },
       });
 
-      const account = await tx.account.findFirst({ where: { userId: user.id } });
+      const account = await tx.appAccount.findFirst({ where: { userId: user.id } });
       if (account) {
-        await tx.account.update({
+        await tx.appAccount.update({
           where: { id: account.id },
           data: { balance: { decrement: data.amount } },
         });
@@ -46,6 +47,9 @@ export async function saveReceiptTransaction(data: SaveReceiptInput) {
     });
 
     revalidatePath("/");
+    revalidatePath("/receipts");
+    revalidatePath("/charts");
+    revalidatePath("/calendar");
     return { success: true };
   } catch (e) {
     console.error("Błąd zapisu paragonu:", e);
@@ -54,7 +58,7 @@ export async function saveReceiptTransaction(data: SaveReceiptInput) {
 }
 
 export async function getCategories() {
-  const user = await db.user.findFirst();
+  const user = await getCurrentAppUser();
   if (!user) return [];
   return db.category.findMany({ where: { userId: user.id }, orderBy: { name: "asc" } });
 }
